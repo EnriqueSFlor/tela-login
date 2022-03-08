@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {Children, useContext} from 'react'
 
 
 import {
@@ -17,15 +17,31 @@ import { AuthProvider, AuthContext } from "./contexts/auth";
 const AppRoutes = () => {
 
     const Private = ({children}) => {
-        const {authenticated} = useContext(AuthContext)
-    }
+        const { authenticated, loading}  = useContext(AuthContext)
+    
+        if(loading){
+            return <div className="loading">Carregando...</div>
+        }
+        
+    if (!authenticated) {
+        return <Navigate to="/login" />
+          }
 
+          return children
+    }
     return(
         <Router>
             <AuthProvider>
                 <Routes>
-                    <Route exact path="/login" element={<LoginPage/>} />
-                    <Route exact path="/" element={<HomePage/>} />
+                    <Route exact path="/login" 
+                    element={<LoginPage/>} 
+                    />
+                    <Route exact path="/" 
+                    element={
+                        <Private>
+                            <HomePage/>
+                        </Private>} 
+                    />
                 </Routes>
             </AuthProvider>
         </Router>
